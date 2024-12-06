@@ -1,3 +1,5 @@
+import com.amazonaws.services.cloudwatch.model.StandardUnit;
+
 /**
  * Order Processor class.
  */
@@ -8,7 +10,6 @@ public class OrderProcessor {
 
     /**
      * Constructs a OrderProcessor object.
-     *
      * @param newPaymentClient The payment processor
      * @param metricsPublisher Used to publish metrics to CloudWatch
      */
@@ -19,7 +20,6 @@ public class OrderProcessor {
 
     /**
      * Sets a new payment processor for handling payments.
-     *
      * @param newPaymentClient The new payment processor
      */
     public void setPaymentProcessor(PaymentProcessor newPaymentClient) {
@@ -28,16 +28,16 @@ public class OrderProcessor {
 
     /**
      * Processes an order and payment.
-     *
      * @param newOrder The order to be processed
      */
     public void processOrder(Order newOrder) {
         try {
-            // Other order processing code omitted
             paymentClient.processPayment(newOrder);
-
+            metricsPublisher.addMetric("ORDER_FAILURES", 0, StandardUnit.Count);
         } catch (Exception e) {
             System.out.println("Exception thrown while processing order: " + e.getMessage());
+            metricsPublisher.addMetric("ORDER_FAILURES", 1, StandardUnit.Count);
         }
     }
+
 }
